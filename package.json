@@ -21,12 +21,12 @@
 	"license": "MIT",
 	"packageManager": "pnpm@10.30.3",
 	"dependencies": {
-		"incur": "^0.1.15",
+		"incur": "^0.2.0",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.5",
-		"@types/node": "^25.3.3",
+		"@types/node": "^24.11.0",
 		"lefthook": "^2.1.2",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18"
