@@ -1,0 +1,59 @@
+import { describe, expect, it } from "vitest";
+
+import packageJson from "../package.json";
+import { cli, OCTOGREP_VERSION } from "../src/cli.js";
+
+describe("cli metadata", () => {
+	it("exposes package bin mapping for octogrep", () => {
+		expect(packageJson.bin).toEqual({ octogrep: "dist/index.js" });
+	});
+
+	it("prints version with --version", async () => {
+		let output = "";
+		let exitCode: number | undefined;
+
+		await cli.serve(["--version"], {
+			stdout(chunk) {
+				output += chunk;
+			},
+			exit(code) {
+				exitCode = code;
+			},
+		});
+
+		expect(exitCode).toBeUndefined();
+		expect(output.trim()).toBe(OCTOGREP_VERSION);
+		expect(OCTOGREP_VERSION).toBe(packageJson.version);
+	});
+
+	it("shows help for search subcommand", async () => {
+		let output = "";
+
+		await cli.serve(["search", "--help"], {
+			stdout(chunk) {
+				output += chunk;
+			},
+			exit() {},
+		});
+
+		expect(output).toContain("Usage: octogrep search <query>");
+	});
+
+	it("returns COMMAND_NOT_FOUND for legacy root query style", async () => {
+		let output = "";
+		let exitCode: number | undefined;
+
+		await cli.serve(["legacy", "--json"], {
+			stdout(chunk) {
+				output += chunk;
+			},
+			exit(code) {
+				exitCode = code;
+			},
+		});
+
+		const parsed = JSON.parse(output);
+		expect(exitCode).toBe(1);
+		expect(parsed.code).toBe("COMMAND_NOT_FOUND");
+	});
+});

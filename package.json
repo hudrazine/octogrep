@@ -2,14 +2,18 @@
 	"name": "octogrep",
 	"version": "0.0.1",
 	"description": "A lightweight GitHub code search CLI for AI agents, outputting in a token-efficient TOON format.",
+	"type": "module",
 	"main": "index.js",
+	"bin": {
+		"octogrep": "dist/index.js"
+	},
 	"scripts": {
 		"build": "tsc",
 		"format": "biome format --write",
 		"lint": "biome lint --write",
 		"check": "biome check --write",
 		"typecheck": "tsc --noEmit",
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "vitest run",
 		"prepare": "lefthook install"
 	},
 	"keywords": [],

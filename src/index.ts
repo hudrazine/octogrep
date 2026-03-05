@@ -1,1 +1,4 @@
-console.log("Hello, Octogrep!");
+#!/usr/bin/env node
+import { cli } from "./cli.js";
+
+await cli.serve();
