@@ -1,7 +1,7 @@
 {
 	"name": "octogrep",
 	"version": "0.0.1",
-	"description": "A lightweight GitHub code search CLI for AI agents, outputting in a token-efficient TOON format.",
+	"description": "GitHub code search CLI for AI agents and LLM workflows with token-efficient TOON output.",
 	"type": "module",
 	"main": "dist/index.js",
 	"bin": {
@@ -21,9 +21,27 @@
 		"test": "vitest run",
 		"prepare": "lefthook install"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": [
+		"github",
+		"code-search",
+		"github-search",
+		"cli",
+		"ai-agent",
+		"llm",
+		"toon",
+		"developer-tools",
+		"incur"
+	],
+	"author": "hudrazine (https://github.com/hudrazine)",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hudrazine/octogrep.git"
+	},
+	"homepage": "https://github.com/hudrazine/octogrep#readme",
+	"bugs": {
+		"url": "https://github.com/hudrazine/octogrep/issues"
+	},
 	"publishConfig": {
 		"access": "public"
 	},
