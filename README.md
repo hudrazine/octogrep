@@ -11,6 +11,14 @@ It uses `incur` for structured output and emits TOON format by default.
 
 Internally, octogrep calls GitHub Search API through GitHub CLI (`gh`).
 
+## What is TOON?
+
+TOON (Token-Oriented Object Notation) is a compact, human-readable encoding of the JSON data model.
+It is designed for LLM input as a drop-in, lossless representation of existing JSON while reducing token usage.
+In octogrep, using TOON by default keeps search output compact and model-friendly.
+
+Learn more: https://github.com/toon-format/toon
+
 ## Requirements
 
 - Node.js
@@ -39,11 +47,6 @@ octogrep search "root command"
 octogrep search "http client" --repo cli/cli --language go --limit 5
 octogrep search "panic" --owner cli --filename root.go
 ```
-
-### Migration note
-
-Legacy root-query style (`octogrep <query>`) is no longer supported.
-Use `octogrep search <query>` explicitly.
 
 ### `search` options
 
@@ -101,3 +104,11 @@ Run real GitHub integration smoke test:
 ```sh
 OCTOGREP_E2E=1 pnpm test
 ```
+
+## Acknowledgements
+
+This project is built with the following tools:
+
+- [`incur`](https://github.com/wevm/incur): TypeScript CLI framework used for structured command and output handling.
+- [`TOON`](https://github.com/toon-format/toon): Token-Oriented Object Notation used as the default output format.
+- [`GitHub CLI (gh)`](https://github.com/cli/cli): Used to execute GitHub code search through authenticated `gh` sessions.
