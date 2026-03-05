@@ -1,3 +1,7 @@
+[![NPM Version](https://img.shields.io/npm/v/octogrep)](https://www.npmjs.com/package/octogrep)
+[![NPM License](https://img.shields.io/npm/l/octogrep)](https://www.npmjs.com/package/octogrep)
+[![Publish](https://github.com/hudrazine/octogrep/actions/workflows/publish.yml/badge.svg)](https://github.com/hudrazine/octogrep/actions/workflows/publish.yml)
+
 # octogrep
 
 octogrep is a lightweight CLI for GitHub code search optimized for AI agents.
@@ -30,6 +34,27 @@ gh auth login
 ```
 
 octogrep never stores GitHub tokens and relies on the authenticated `gh` session.
+
+## Installation
+
+Global install:
+
+```sh
+npm install -g octogrep
+pnpm add -g octogrep
+bun add -g octogrep
+```
+
+One-shot execution:
+
+```sh
+npx octogrep --version
+pnpm dlx octogrep --version
+yarn dlx octogrep --version
+bunx octogrep --version
+```
+
+You can confirm the CLI is available with `octogrep --version`.
 
 ## Usage
 
