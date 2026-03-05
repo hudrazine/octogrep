@@ -3,10 +3,15 @@
 	"version": "0.0.1",
 	"description": "A lightweight GitHub code search CLI for AI agents, outputting in a token-efficient TOON format.",
 	"type": "module",
-	"main": "index.js",
+	"main": "dist/index.js",
 	"bin": {
 		"octogrep": "dist/index.js"
 	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
 	"scripts": {
 		"build": "tsc",
 		"format": "biome format --write",
@@ -19,6 +24,9 @@
 	"keywords": [],
 	"author": "",
 	"license": "MIT",
+	"publishConfig": {
+		"access": "public"
+	},
 	"packageManager": "pnpm@10.30.3",
 	"dependencies": {
 		"incur": "^0.2.0",
