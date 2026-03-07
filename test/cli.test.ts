@@ -39,6 +39,19 @@ describe("cli metadata", () => {
 		expect(output).toContain("Usage: octogrep search <query>");
 	});
 
+	it("shows help for fetch subcommand", async () => {
+		let output = "";
+
+		await cli.serve(["fetch", "--help"], {
+			stdout(chunk) {
+				output += chunk;
+			},
+			exit() {},
+		});
+
+		expect(output).toContain("Usage: octogrep fetch <contentsUrl>");
+	});
+
 	it("returns COMMAND_NOT_FOUND for legacy root query style", async () => {
 		let output = "";
 		let exitCode: number | undefined;

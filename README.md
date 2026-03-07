@@ -75,6 +75,7 @@ npx skills add hudrazine/octogrep --skill octogrep -a claude-code
 
 ```sh
 octogrep search <query> [options]
+octogrep fetch <contentsUrl>
 ```
 
 Use quotes for multi-word queries (for example, `octogrep search "root command"`).
@@ -86,6 +87,7 @@ Examples:
 octogrep search "root command"
 octogrep search "http client" --repo cli/cli --language go --limit 5
 octogrep search "panic" --owner cli --filename root.go
+octogrep fetch "https://api.github.com/repositories/212613049/contents/pkg/cmd/root/root.go?ref=59ba50885feeed63a6f31de06ced5a06a5a3930d"
 ```
 
 ### `search` options
@@ -107,6 +109,21 @@ Use either:
 
 - raw qualifier style: `octogrep search 'term repo:owner/name'`
 - option style: `octogrep search term --repo owner/name`
+
+### `fetch`
+
+Use `fetch` with a `contentsUrl` returned by `octogrep search`.
+
+```sh
+octogrep fetch "$contentsUrl"
+```
+
+`fetch` is intentionally strict:
+
+- accepts only GitHub Contents API URLs on authenticated GitHub hosts
+- requires the `https://...?...ref=...` URL returned by `octogrep search`
+- rejects browser `htmlUrl` values
+- prints file contents for AI and human reading workflows
 
 ## Output
 
@@ -130,10 +147,15 @@ Returned fields are intentionally minimal:
   - `contentsUrl` (GitHub Contents API URL for `gh api`)
   - `fragment` (nullable)
 
-Use `htmlUrl` for browsing and `contentsUrl` for fetching file contents:
+Use `htmlUrl` for browsing and `contentsUrl` for fetching file contents as text:
 
 ```sh
-gh api "$contentsUrl"
+octogrep fetch "$contentsUrl"
+```
+
+If you need byte-exact raw output or stable hashes, use `gh api` directly:
+
+```sh
 gh api -H "Accept: application/vnd.github.raw+json" "$contentsUrl"
 ```
 

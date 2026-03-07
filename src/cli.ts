@@ -1,5 +1,6 @@
 import { Cli, z } from "incur";
 
+import { executeFetch } from "./fetch.js";
 import { OctogrepError } from "./gh.js";
 import { executeSearch } from "./search.js";
 import { searchOptionsSchema, searchOutputSchema } from "./types.js";
@@ -10,6 +11,51 @@ export const cli = Cli.create("octogrep", {
 	version: OCTOGREP_VERSION,
 	description: "A lightweight GitHub code search CLI for AI agents, outputting token-efficient results.",
 });
+
+type ErrorContext = {
+	error: (input: {
+		code: string;
+		message: string;
+		retryable: boolean;
+		cta?: {
+			description: string;
+			commands: string[];
+		};
+	}) => never;
+};
+
+function handleOctogrepError(c: ErrorContext, error: OctogrepError) {
+	switch (error.code) {
+		case "GH_NOT_INSTALLED":
+			return c.error({
+				code: error.code,
+				message: `${error.message} Install GitHub CLI from https://cli.github.com/.`,
+				retryable: false,
+			});
+		case "GH_NOT_AUTHENTICATED":
+			return c.error({
+				code: error.code,
+				message: `${error.message} Run gh auth login and retry.`,
+				retryable: true,
+			});
+		case "QUERY_CONFLICT":
+			return c.error({
+				code: error.code,
+				message: error.message,
+				retryable: false,
+				cta: {
+					description: "Use either raw query qualifiers or the corresponding options:",
+					commands: ["search 'term repo:owner/name'", "search term --repo owner/name"],
+				},
+			});
+		default:
+			return c.error({
+				code: error.code,
+				message: error.message,
+				retryable: error.retryable,
+			});
+	}
+}
 
 cli.command("search", {
 	description: "Search GitHub code and output token-efficient results.",
@@ -34,36 +80,34 @@ cli.command("search", {
 			return executeSearch(c.args.query, c.options);
 		} catch (error) {
 			if (error instanceof OctogrepError) {
-				switch (error.code) {
-					case "GH_NOT_INSTALLED":
-						return c.error({
-							code: error.code,
-							message: `${error.message} Install GitHub CLI from https://cli.github.com/.`,
-							retryable: false,
-						});
-					case "GH_NOT_AUTHENTICATED":
-						return c.error({
-							code: error.code,
-							message: `${error.message} Run gh auth login and retry.`,
-							retryable: true,
-						});
-					case "QUERY_CONFLICT":
-						return c.error({
-							code: error.code,
-							message: error.message,
-							retryable: false,
-							cta: {
-								description: "Use either raw query qualifiers or the corresponding options:",
-								commands: ["search 'term repo:owner/name'", "search term --repo owner/name"],
-							},
-						});
-					default:
-						return c.error({
-							code: error.code,
-							message: error.message,
-							retryable: error.retryable,
-						});
-				}
+				return handleOctogrepError(c, error);
+			}
+
+			throw error;
+		}
+	},
+});
+
+cli.command("fetch", {
+	description: "Fetch raw file contents from a GitHub Contents API URL.",
+	args: z.object({
+		contentsUrl: z.string().describe("GitHub Contents API URL from octogrep search results."),
+	}),
+	output: z.string(),
+	examples: [
+		{
+			args: {
+				contentsUrl: "https://api.github.com/repositories/212613049/contents/pkg/cmd/root/root.go?ref=main",
+			},
+			description: "Fetch raw file contents from a search result contentsUrl",
+		},
+	],
+	async run(c) {
+		try {
+			return executeFetch(c.args.contentsUrl);
+		} catch (error) {
+			if (error instanceof OctogrepError) {
+				return handleOctogrepError(c, error);
 			}
 
 			throw error;
