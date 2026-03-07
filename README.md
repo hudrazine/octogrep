@@ -86,14 +86,16 @@ Examples:
 ```sh
 octogrep search "root command"
 octogrep search "http client" --repo cli/cli --language go --limit 5
-octogrep search "panic" --owner cli --filename root.go
+octogrep search "panic" --org cli --filename root.go
+octogrep search "createServer" --user vercel --language ts
 octogrep fetch "https://api.github.com/repositories/212613049/contents/pkg/cmd/root/root.go?ref=59ba50885feeed63a6f31de06ced5a06a5a3930d"
 ```
 
 ### `search` options
 
 - `--repo <owner/repo>` (repeatable)
-- `--owner <owner>` (repeatable)
+- `--org <org>` (repeatable)
+- `--user <user>` (repeatable)
 - `--language <language>` (repeatable)
 - `--path <path>`
 - `--filename <filename>`

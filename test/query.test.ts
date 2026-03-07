@@ -6,7 +6,8 @@ import type { SearchOptions } from "../src/types.js";
 function options(overrides: Partial<SearchOptions> = {}): SearchOptions {
 	return {
 		repo: undefined,
-		owner: undefined,
+		org: undefined,
+		user: undefined,
 		language: undefined,
 		path: undefined,
 		filename: undefined,
@@ -24,6 +25,12 @@ describe("compileQuery", () => {
 		expect(result.conflicts).toEqual([]);
 	});
 
+	it("appends org and user qualifiers from options", () => {
+		const result = compileQuery("panic", options({ org: ["cli"], user: ["vercel"] }));
+		expect(result.compiledQuery).toBe("panic org:cli user:vercel");
+		expect(result.conflicts).toEqual([]);
+	});
+
 	it("quotes qualifier values with spaces", () => {
 		const result = compileQuery("http", options({ path: "src core" }));
 		expect(result.compiledQuery).toBe('http path:"src core"');
@@ -32,6 +39,15 @@ describe("compileQuery", () => {
 	it("detects conflicts when raw query already has qualifier", () => {
 		const result = compileQuery("panic repo:cli/cli", options({ repo: ["owner/repo"] }));
 		expect(result.conflicts).toEqual([{ option: "repo", qualifier: "repo" }]);
+	});
+
+	it("detects conflicts for org and user qualifiers", () => {
+		expect(compileQuery("panic org:cli", options({ org: ["cli"] })).conflicts).toEqual([
+			{ option: "org", qualifier: "org" },
+		]);
+		expect(compileQuery("panic user:vercel", options({ user: ["vercel"] })).conflicts).toEqual([
+			{ option: "user", qualifier: "user" },
+		]);
 	});
 
 	it("detects conflicts when qualifier is wrapped in parentheses", () => {

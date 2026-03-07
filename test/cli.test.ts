@@ -37,6 +37,9 @@ describe("cli metadata", () => {
 		});
 
 		expect(output).toContain("Usage: octogrep search <query>");
+		expect(output).toContain("--org <array>");
+		expect(output).toContain("--user <array>");
+		expect(output).not.toContain("--owner");
 	});
 
 	it("shows help for fetch subcommand", async () => {

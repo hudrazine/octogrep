@@ -9,7 +9,8 @@ maybeDescribe("octogrep e2e", () => {
 	it("runs a real GitHub code search through gh", () => {
 		const result = executeSearch("root command", {
 			repo: ["cli/cli"],
-			owner: undefined,
+			org: undefined,
+			user: undefined,
 			language: undefined,
 			path: undefined,
 			filename: "root.go",

@@ -74,6 +74,11 @@ cli.command("search", {
 			options: { repo: ["cli/cli"], language: ["go"], limit: 5 },
 			description: "Search in a repository with qualifiers",
 		},
+		{
+			args: { query: '"panic"' },
+			options: { org: ["cli"], filename: "root.go", limit: 5 },
+			description: "Search within an organization using GitHub code search qualifiers",
+		},
 	],
 	async run(c) {
 		try {

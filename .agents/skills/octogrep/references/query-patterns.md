@@ -52,17 +52,17 @@ Command shape:
 octogrep search "panic" --filename root.go --limit 10
 ```
 
-Add `--repo` or `--owner` only after confirming the filename filter is useful.
+Add `--repo`, `--org`, or `--user` only after confirming the filename filter is useful.
 
-## Owner or Repo Narrowing
+## Organization, User, or Repo Narrowing
 
 Prompt:
-`Search http client usage inside cli-owned repositories`
+`Search http client usage inside repositories owned by the cli organization`
 
 Command shape:
 
 ```sh
-octogrep search "http client" --owner cli --limit 10
+octogrep search "http client" --org cli --limit 10
 ```
 
 When one repository becomes the clear target, switch to `--repo owner/name`.

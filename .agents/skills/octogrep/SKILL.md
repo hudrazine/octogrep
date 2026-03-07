@@ -25,7 +25,7 @@ Begin with `octogrep search <query> --limit 5` to `--limit 20`.
 Prefer literal phrases first, then add structure only when needed.
 
 - Quote every multi-word search term
-- Prefer CLI options for new qualifiers such as `--repo`, `--owner`, `--language`, `--path`, `--filename`, and `--extension`
+- Prefer CLI options for new qualifiers such as `--repo`, `--org`, `--user`, `--language`, `--path`, `--filename`, and `--extension`
 - Use the detailed rules below when choosing between option style and raw qualifiers
 
 ### 3. Select candidate files
@@ -51,7 +51,7 @@ Read full files when you need to confirm behavior, summarize an implementation, 
 
 Change one part of the query at a time so the effect is easy to explain.
 
-- Narrow by repository or owner before adding filename or path constraints
+- Narrow by repository, organization, or user before adding filename or path constraints
 - Add filename, path, or language filters one at a time
 
 ### 6. Change output format only when needed
@@ -101,12 +101,12 @@ Use `octogrep`'s public errors and observed results to decide the next step. Avo
 - `GH_SEARCH_FAILED`: Treat HTTP `408`, `429`, and `5xx` as temporary and retry only after a short pause or after reducing request scope. Treat `422` and similar validation failures as non-temporary and fix the query instead.
 - `INVALID_CONTENTS_URL`: Use the `contentsUrl` returned by `octogrep search` as-is. Do not substitute `htmlUrl`, hand-build URLs, or remove the `ref` query parameter.
 - `GH_FETCH_FAILED`: Try one alternate candidate before changing the search query. If the alternate candidate also fails, revisit the search scope or query terms.
-- Zero results: Relax the narrowest filter first and explain which single dimension you changed between attempts. If the query is very specific, shorten the literal phrase before removing repo or owner scope.
+- Zero results: Relax the narrowest filter first and explain which single dimension you changed between attempts. If the query is very specific, shorten the literal phrase before removing repo, org, or user scope.
 
 ## Common Tasks
 
 - Find an upstream implementation pattern for a function, class, or CLI behavior.
 - Collect a few representative examples of framework API usage.
 - Search for error text or log lines across public repositories.
-- Sample how a symbol is used in one owner or one repo before broadening to GitHub-wide search.
+- Sample how a symbol is used in one organization, one user, or one repo before broadening to GitHub-wide search.
 - Compare how multiple repositories structure the same concept.

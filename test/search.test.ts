@@ -20,7 +20,8 @@ vi.mock("../src/gh.js", async () => {
 function options(overrides: Partial<SearchOptions> = {}): SearchOptions {
 	return {
 		repo: undefined,
-		owner: undefined,
+		org: undefined,
+		user: undefined,
 		language: undefined,
 		path: undefined,
 		filename: undefined,
@@ -118,5 +119,21 @@ describe("executeSearch", () => {
 
 	it("rejects empty query", () => {
 		expect(() => executeSearch("   ", options())).toThrowError("Search query must not be empty.");
+	});
+
+	it("passes org and user qualifiers through compiled query", () => {
+		searchCodeWithGh.mockReturnValue({
+			total_count: 0,
+			incomplete_results: false,
+			items: [],
+		});
+
+		executeSearch("panic", options({ org: ["cli"], user: ["vercel"] }));
+
+		expect(searchCodeWithGh).toHaveBeenLastCalledWith({
+			query: "panic org:cli user:vercel",
+			limit: 20,
+			page: 1,
+		});
 	});
 });

@@ -2,7 +2,8 @@ import type { SearchOptions } from "./types.js";
 
 const QUALIFIER_KEYS = {
 	repo: "repo",
-	owner: "owner",
+	org: "org",
+	user: "user",
 	language: "language",
 	path: "path",
 	filename: "filename",
@@ -51,7 +52,8 @@ export function compileQuery(inputQuery: string, options: SearchOptions): Compil
 
 	const segments = [query];
 	for (const repo of options.repo ?? []) segments.push(`repo:${quoteQualifierValue(repo)}`);
-	for (const owner of options.owner ?? []) segments.push(`owner:${quoteQualifierValue(owner)}`);
+	for (const org of options.org ?? []) segments.push(`org:${quoteQualifierValue(org)}`);
+	for (const user of options.user ?? []) segments.push(`user:${quoteQualifierValue(user)}`);
 	for (const language of options.language ?? []) segments.push(`language:${quoteQualifierValue(language)}`);
 	if (options.path) segments.push(`path:${quoteQualifierValue(options.path)}`);
 	if (options.filename) segments.push(`filename:${quoteQualifierValue(options.filename)}`);

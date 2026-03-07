@@ -2,7 +2,8 @@ import { z } from "incur";
 
 export const searchOptionsSchema = z.object({
 	repo: z.array(z.string()).optional().describe("Filter by repository (owner/repo). Repeatable."),
-	owner: z.array(z.string()).optional().describe("Filter by owner. Repeatable."),
+	org: z.array(z.string()).optional().describe("Filter by organization. Repeatable."),
+	user: z.array(z.string()).optional().describe("Filter by user. Repeatable."),
 	language: z.array(z.string()).optional().describe("Filter by language. Repeatable."),
 	path: z.string().optional().describe("Filter by path qualifier."),
 	filename: z.string().optional().describe("Filter by filename qualifier."),
