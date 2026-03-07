@@ -41,8 +41,10 @@ Use the result metadata to decide which files deserve a full read.
 Read full files when you need to confirm behavior, summarize an implementation, or compare approaches.
 
 - Use `items[].htmlUrl` when you want the browser view of the matching file
-- Use `items[].contentsUrl` with `gh api` when you want to fetch the file contents
-- `gh api -H "Accept: application/vnd.github.raw+json" "$contentsUrl"` returns the raw file body directly
+- Use `items[].contentsUrl` with `octogrep fetch <contentsUrl>` when you want to fetch the file contents as text
+- Pass the `https://...?...ref=...` `contentsUrl` returned by `octogrep search` without rewriting the host, path, or query
+- Do not pass `htmlUrl` to `fetch`, and do not drop the `ref` query parameter
+- If you need byte-exact raw output or lower-level control, use `gh api -H "Accept: application/vnd.github.raw+json" "$contentsUrl"` directly
 - For light triage, `fragment` is often enough to delay this step
 
 ### 5. Refine one dimension at a time
@@ -97,7 +99,8 @@ Use `octogrep`'s public errors and observed results to decide the next step. Avo
 - `GH_NOT_AUTHENTICATED`: Tell the user that GitHub CLI authentication is missing. Ask them to run `gh auth login`, then rerun the same search.
 - `QUERY_CONFLICT`: Remove the duplicated qualifier source. Keep either the raw query qualifier or the matching CLI option, not both.
 - `GH_SEARCH_FAILED`: Treat HTTP `408`, `429`, and `5xx` as temporary and retry only after a short pause or after reducing request scope. Treat `422` and similar validation failures as non-temporary and fix the query instead.
-- File contents could not be fetched from a result URL: Try one alternate candidate before changing the search query. If the alternate candidate also fails, revisit the search scope or query terms.
+- `INVALID_CONTENTS_URL`: Use the `contentsUrl` returned by `octogrep search` as-is. Do not substitute `htmlUrl`, hand-build URLs, or remove the `ref` query parameter.
+- `GH_FETCH_FAILED`: Try one alternate candidate before changing the search query. If the alternate candidate also fails, revisit the search scope or query terms.
 - Zero results: Relax the narrowest filter first and explain which single dimension you changed between attempts. If the query is very specific, shorten the literal phrase before removing repo or owner scope.
 
 ## Common Tasks
