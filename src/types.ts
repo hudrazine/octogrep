@@ -17,7 +17,8 @@ export const searchItemSchema = z.object({
 	repository: z.string(),
 	path: z.string(),
 	sha: z.string(),
-	url: z.string(),
+	htmlUrl: z.string(),
+	contentsUrl: z.string(),
 	fragment: z.string().nullable(),
 });
 

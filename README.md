@@ -126,8 +126,16 @@ Returned fields are intentionally minimal:
   - `repository`
   - `path`
   - `sha`
-  - `url`
+  - `htmlUrl` (GitHub browser URL)
+  - `contentsUrl` (GitHub Contents API URL for `gh api`)
   - `fragment` (nullable)
+
+Use `htmlUrl` for browsing and `contentsUrl` for fetching file contents:
+
+```sh
+gh api "$contentsUrl"
+gh api -H "Accept: application/vnd.github.raw+json" "$contentsUrl"
+```
 
 When no results are found, octogrep returns an empty list and exits with code `0`.
 

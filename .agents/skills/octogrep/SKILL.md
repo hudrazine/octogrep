@@ -40,8 +40,9 @@ Use the result metadata to decide which files deserve a full read.
 
 Read full files when you need to confirm behavior, summarize an implementation, or compare approaches.
 
-- Treat each `items[].url` value as a GitHub web URL, not a raw file URL
-- Convert `https://github.com/<owner>/<repo>/blob/<ref>/<path>` into `https://raw.githubusercontent.com/<owner>/<repo>/<ref>/<path>` before fetching
+- Use `items[].htmlUrl` when you want the browser view of the matching file
+- Use `items[].contentsUrl` with `gh api` when you want to fetch the file contents
+- `gh api -H "Accept: application/vnd.github.raw+json" "$contentsUrl"` returns the raw file body directly
 - For light triage, `fragment` is often enough to delay this step
 
 ### 5. Refine one dimension at a time

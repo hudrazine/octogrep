@@ -10,6 +10,7 @@ const githubResponseSchema = z.object({
 		z.object({
 			path: z.string(),
 			sha: z.string(),
+			url: z.string(),
 			html_url: z.string(),
 			repository: z.object({
 				full_name: z.string(),
@@ -53,7 +54,8 @@ export function executeSearch(inputQuery: string, options: SearchOptions): Searc
 		repository: item.repository.full_name,
 		path: item.path,
 		sha: item.sha,
-		url: item.html_url,
+		htmlUrl: item.html_url,
+		contentsUrl: item.url,
 		fragment: item.text_matches?.[0]?.fragment ?? null,
 	}));
 

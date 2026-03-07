@@ -20,5 +20,9 @@ maybeDescribe("octogrep e2e", () => {
 
 		expect(result.meta.limit).toBe(5);
 		expect(Array.isArray(result.items)).toBe(true);
+		if (result.items.length > 0) {
+			expect(typeof result.items[0]?.htmlUrl).toBe("string");
+			expect(typeof result.items[0]?.contentsUrl).toBe("string");
+		}
 	});
 });
