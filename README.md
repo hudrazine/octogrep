@@ -86,7 +86,7 @@ Examples:
 ```sh
 octogrep search "root command"
 octogrep search "http client" --repo cli/cli --language go --limit 5
-octogrep search "panic" --org cli --filename root.go
+octogrep search "panic" --org cli --filename option.go
 octogrep search "createServer" --user vercel --language ts
 octogrep fetch "https://api.github.com/repositories/212613049/contents/pkg/cmd/root/root.go?ref=59ba50885feeed63a6f31de06ced5a06a5a3930d"
 ```
@@ -105,12 +105,12 @@ octogrep fetch "https://api.github.com/repositories/212613049/contents/pkg/cmd/r
 
 ### Query conflict rule
 
-If raw query already includes a qualifier (for example `repo:`) and the corresponding option is also provided (for example `--repo`), octogrep returns `QUERY_CONFLICT`.
+If raw query already includes a qualifier (for example `org:`) and the corresponding option is also provided (for example `--org`), octogrep returns `QUERY_CONFLICT`.
 
 Use either:
 
-- raw qualifier style: `octogrep search 'term repo:owner/name'`
-- option style: `octogrep search term --repo owner/name`
+- raw qualifier style: `octogrep search 'term org:my-org'`
+- option style: `octogrep search term --org my-org`
 
 ### `fetch`
 

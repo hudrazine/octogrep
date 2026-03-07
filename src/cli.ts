@@ -45,7 +45,7 @@ function handleOctogrepError(c: ErrorContext, error: OctogrepError) {
 				retryable: false,
 				cta: {
 					description: "Use either raw query qualifiers or the corresponding options:",
-					commands: ["search 'term repo:owner/name'", "search term --repo owner/name"],
+					commands: ["search 'term org:my-org'", "search term --org my-org"],
 				},
 			});
 		default:
@@ -76,7 +76,7 @@ cli.command("search", {
 		},
 		{
 			args: { query: '"panic"' },
-			options: { org: ["cli"], filename: "root.go", limit: 5 },
+			options: { org: ["cli"], filename: "option.go", limit: 5 },
 			description: "Search within an organization using GitHub code search qualifiers",
 		},
 	],

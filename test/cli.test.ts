@@ -40,6 +40,7 @@ describe("cli metadata", () => {
 		expect(output).toContain("--org <array>");
 		expect(output).toContain("--user <array>");
 		expect(output).not.toContain("--owner");
+		expect(output).toContain('octogrep search "panic" --org cli --filename option.go --limit 5');
 	});
 
 	it("shows help for fetch subcommand", async () => {
@@ -71,5 +72,27 @@ describe("cli metadata", () => {
 		const parsed = JSON.parse(output);
 		expect(exitCode).toBe(1);
 		expect(parsed.code).toBe("COMMAND_NOT_FOUND");
+	});
+
+	it("returns org-based conflict guidance for QUERY_CONFLICT", async () => {
+		let output = "";
+		let exitCode: number | undefined;
+
+		await cli.serve(["search", "panic org:cli", "--org", "cli", "--json"], {
+			stdout(chunk) {
+				output += chunk;
+			},
+			exit(code) {
+				exitCode = code;
+			},
+		});
+
+		const parsed = JSON.parse(output);
+		expect(exitCode).toBe(1);
+		expect(parsed.code).toBe("QUERY_CONFLICT");
+		expect(parsed.cta.commands).toEqual([
+			{ command: "octogrep search 'term org:my-org'" },
+			{ command: "octogrep search term --org my-org" },
+		]);
 	});
 });
