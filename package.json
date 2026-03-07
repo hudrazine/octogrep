@@ -1,6 +1,6 @@
 {
 	"name": "octogrep",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "GitHub code search CLI for AI agents and LLM workflows with token-efficient TOON output.",
 	"type": "module",
 	"main": "dist/index.js",
