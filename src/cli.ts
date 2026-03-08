@@ -24,37 +24,84 @@ type ErrorContext = {
 	}) => never;
 };
 
-function handleOctogrepError(c: ErrorContext, error: OctogrepError) {
+type PublicErrorResponse = Parameters<ErrorContext["error"]>[0];
+
+export function formatOctogrepError(error: OctogrepError): PublicErrorResponse {
 	switch (error.code) {
 		case "GH_NOT_INSTALLED":
-			return c.error({
+			return {
 				code: error.code,
-				message: `${error.message} Install GitHub CLI from https://cli.github.com/.`,
+				message: `${error.message} Install GitHub CLI from https://cli.github.com/ and rerun the same command.`,
 				retryable: false,
-			});
+			};
 		case "GH_NOT_AUTHENTICATED":
-			return c.error({
+			return {
 				code: error.code,
-				message: `${error.message} Run gh auth login and retry.`,
+				message: `${error.message} Run \`gh auth login\`, then rerun the same command.`,
 				retryable: true,
-			});
+			};
 		case "QUERY_CONFLICT":
-			return c.error({
+			return {
 				code: error.code,
 				message: error.message,
 				retryable: false,
 				cta: {
-					description: "Use either raw query qualifiers or the corresponding options:",
+					// Keep commands only for deterministic octogrep-owned errors. GH/gh failures
+					// stay in message form because we cannot safely synthesize a replay command.
+					description:
+						"Use either raw query qualifiers or the corresponding options. Do not specify the same qualifier family in both places.",
 					commands: ["search 'term org:my-org'", "search term --org my-org"],
 				},
-			});
+			};
+		case "INVALID_QUERY":
+			return {
+				code: error.code,
+				message: error.message,
+				retryable: false,
+				cta: {
+					description: "Provide a non-empty query first, then add filters with CLI options if needed.",
+					commands: ['search "http client" --limit 5'],
+				},
+			};
+		case "INVALID_CONTENTS_URL":
+			return {
+				code: error.code,
+				message: `${error.message} Use the contentsUrl returned by octogrep search as-is.`,
+				retryable: false,
+			};
+		case "GH_SEARCH_FAILED":
+			return {
+				code: error.code,
+				message: error.retryable
+					? `${error.message} Retry the same search after a short pause or with a narrower scope.`
+					: `${error.message} Check the message, then verify auth or permissions or adjust the query before retrying.`,
+				retryable: error.retryable,
+			};
+		case "GH_FETCH_FAILED":
+			return {
+				code: error.code,
+				message: error.retryable
+					? `${error.message} Retry the same fetch after a short pause.`
+					: `${error.message} Check the message, then verify auth or permissions or use a fresh contentsUrl before retrying.`,
+				retryable: error.retryable,
+			};
+		case "GH_RESPONSE_INVALID":
+			return {
+				code: error.code,
+				message: "GitHub CLI returned an unexpected response. Check gh directly and report the issue if it persists.",
+				retryable: false,
+			};
 		default:
-			return c.error({
+			return {
 				code: error.code,
 				message: error.message,
 				retryable: error.retryable,
-			});
+			};
 	}
+}
+
+function handleOctogrepError(c: ErrorContext, error: OctogrepError) {
+	return c.error(formatOctogrepError(error));
 }
 
 cli.command("search", {

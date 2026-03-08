@@ -142,6 +142,16 @@ octogrep fetch "$contentsUrl" --token-offset 400 --token-limit 400
 
 Use `--limit` and `--page` to page `search` results themselves. Use `--token-limit` and `--token-offset` when you want to trim already formatted output, especially long `fetch` output for LLM handoff or staged reading.
 
+## Error handling
+
+When `octogrep` fails with `--json`, use the structured error fields to decide the next step:
+
+- `code`: stable error category
+- `retryable`: whether retrying is reasonable
+- `cta`: optional recovery hint when octogrep can safely suggest a concrete follow-up command
+
+Prefer `code`, `message`, and `retryable` for recovery decisions. If `cta` is present, treat it as a convenience hint rather than a guaranteed replay script.
+
 ## Output
 
 Default output is TOON (`incur` standard behavior).

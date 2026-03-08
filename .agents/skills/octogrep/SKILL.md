@@ -104,16 +104,11 @@ octogrep search '"panic" repo:cli/cli' --repo cli/cli
 
 ## Failure Handling
 
-Use `octogrep`'s public errors and observed results to decide the next step. Avoid extra preflight checks unless setup itself is the task.
+Use `octogrep`'s structured error output to decide the next step. Avoid extra preflight checks unless setup itself is the task.
 
-- `octogrep` command is unavailable before the search starts: Tell the user how to install `octogrep`. Do not switch automatically to one-shot runners, but if they need a manual fallback, mention supported one-shot options such as `npx octogrep --version` or `pnpm dlx octogrep --version`.
-- `GH_NOT_INSTALLED`: Tell the user that GitHub CLI (`gh`) is not installed or unavailable. Ask them to install `gh`, then rerun the same search.
-- `GH_NOT_AUTHENTICATED`: Tell the user that GitHub CLI authentication is missing. Ask them to run `gh auth login`, then rerun the same search.
-- `QUERY_CONFLICT`: Remove the duplicated qualifier source. Keep either the raw query qualifier or the matching CLI option, not both.
-- `GH_SEARCH_FAILED`: Treat HTTP `408`, `429`, and `5xx` as temporary and retry only after a short pause or after reducing request scope. Treat `422` and similar validation failures as non-temporary and fix the query instead.
-- `INVALID_CONTENTS_URL`: Use the `contentsUrl` returned by `octogrep search` as-is. Do not substitute `htmlUrl`, hand-build URLs, or remove the `ref` query parameter.
-- `GH_FETCH_FAILED`: Try one alternate candidate before changing the search query. If the alternate candidate also fails, revisit the search scope or query terms.
-- Zero results: Relax the narrowest filter first and explain which single dimension you changed between attempts. If the query is very specific, shorten the literal phrase before removing repo, org, or user scope.
+- Read `code`, `message`, and `retryable` from the CLI output first.
+- If `cta` is present, treat it as a convenience hint for octogrep-owned errors rather than a guaranteed replay command.
+- For zero results, relax the narrowest filter first and explain the single dimension you changed between attempts.
 
 ## Common Tasks
 

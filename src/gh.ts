@@ -38,28 +38,59 @@ type GhAuthStatus = {
 	>;
 };
 
-function extractHttpStatus(result: GhResult): number | undefined {
+type GhErrorPayload = {
+	message?: string;
+	status?: number | string;
+};
+
+function parseGhErrorPayload(stdout: string): GhErrorPayload | undefined {
+	try {
+		return JSON.parse(stdout) as GhErrorPayload;
+	} catch {
+		return undefined;
+	}
+}
+
+function extractHttpStatus(result: GhResult, payload?: GhErrorPayload): number | undefined {
 	const stderrMatch = result.stderr.match(/\(HTTP (\d{3})\)/i);
 	if (stderrMatch?.[1]) return Number(stderrMatch[1]);
 
-	try {
-		const parsed = JSON.parse(result.stdout) as { status?: number | string };
-		const status =
-			typeof parsed.status === "number"
-				? parsed.status
-				: typeof parsed.status === "string"
-					? Number(parsed.status)
-					: Number.NaN;
-		if (Number.isInteger(status)) return status;
-	} catch {}
+	const status =
+		typeof payload?.status === "number"
+			? payload.status
+			: typeof payload?.status === "string"
+				? Number(payload.status)
+				: Number.NaN;
+	if (Number.isInteger(status)) return status;
 
 	return undefined;
 }
 
 function isRetryableGhFailure(status: number | undefined): boolean {
+	// Keep this classification intentionally coarse. octogrep exposes a retryability hint,
+	// but it does not try to fully re-implement GitHub/gh failure semantics.
 	if (status === undefined) return true;
 	if (status === 408 || status === 429) return true;
 	return status >= 500 && status <= 599;
+}
+
+function getGhFailureContext(result: GhResult): {
+	detail: string;
+	status: number | undefined;
+} {
+	const payload = parseGhErrorPayload(result.stdout);
+	const apiMessage = payload?.message?.trim();
+	const status = extractHttpStatus(result, payload);
+
+	return {
+		// Prefer the API body's message when available, but keep the HTTP status so
+		// non-retryable failures still retain useful gh diagnostic context.
+		detail:
+			apiMessage && status
+				? `${apiMessage} (HTTP ${status})`
+				: apiMessage || result.stderr.trim() || result.stdout.trim() || "Unknown gh error",
+		status,
+	};
 }
 
 function runGh(args: string[], errorCode: "GH_SEARCH_FAILED" | "GH_FETCH_FAILED" = "GH_SEARCH_FAILED"): GhResult {
@@ -141,8 +172,7 @@ export function searchCodeWithGh(options: { query: string; limit: number; page: 
 	]);
 
 	if (result.exitCode !== 0) {
-		const detail = result.stderr.trim() || result.stdout.trim() || "Unknown gh error";
-		const status = extractHttpStatus(result);
+		const { detail, status } = getGhFailureContext(result);
 		throw new OctogrepError("GH_SEARCH_FAILED", `GitHub search failed: ${detail}`, isRetryableGhFailure(status));
 	}
 
@@ -157,8 +187,7 @@ export function fetchFileContentsWithGh(contentsUrl: string): string {
 	const result = runGh(["api", "-H", "Accept: application/vnd.github.raw+json", contentsUrl], "GH_FETCH_FAILED");
 
 	if (result.exitCode !== 0) {
-		const detail = result.stderr.trim() || result.stdout.trim() || "Unknown gh error";
-		const status = extractHttpStatus(result);
+		const { detail, status } = getGhFailureContext(result);
 		throw new OctogrepError("GH_FETCH_FAILED", `GitHub fetch failed: ${detail}`, isRetryableGhFailure(status));
 	}
 

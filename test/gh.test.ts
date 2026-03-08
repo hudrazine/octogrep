@@ -19,7 +19,7 @@ function mockGhFailure(stdout: string, stderr: string): void {
 	});
 }
 
-function expectGhFailureRetryable(value: boolean): void {
+function expectSearchGhFailure(input: { message: string; retryable: boolean }): void {
 	try {
 		searchCodeWithGh({ query: "test", limit: 20, page: 1 });
 		expect.unreachable("Expected GH_SEARCH_FAILED to be thrown");
@@ -27,7 +27,8 @@ function expectGhFailureRetryable(value: boolean): void {
 		expect(error).toBeInstanceOf(OctogrepError);
 		const octogrepError = error as OctogrepError;
 		expect(octogrepError.code).toBe("GH_SEARCH_FAILED");
-		expect(octogrepError.retryable).toBe(value);
+		expect(octogrepError.retryable).toBe(input.retryable);
+		expect(octogrepError.message).toBe(input.message);
 	}
 }
 
@@ -38,19 +39,28 @@ describe("searchCodeWithGh retryable classification", () => {
 			"gh: Validation Failed (HTTP 422)",
 		);
 
-		expectGhFailureRetryable(false);
+		expectSearchGhFailure({
+			retryable: false,
+			message: "GitHub search failed: Validation Failed (HTTP 422)",
+		});
 	});
 
 	it("marks HTTP 503 as retryable", () => {
 		mockGhFailure('{"message":"Service Unavailable","status":"503"}', "gh: Service Unavailable (HTTP 503)");
 
-		expectGhFailureRetryable(true);
+		expectSearchGhFailure({
+			retryable: true,
+			message: "GitHub search failed: Service Unavailable (HTTP 503)",
+		});
 	});
 
 	it("falls back to retryable when status is unavailable", () => {
 		mockGhFailure("temporary transport error", "gh: request failed");
 
-		expectGhFailureRetryable(true);
+		expectSearchGhFailure({
+			retryable: true,
+			message: "GitHub search failed: gh: request failed",
+		});
 	});
 });
 
@@ -89,6 +99,7 @@ describe("fetchFileContentsWithGh", () => {
 			const octogrepError = error as OctogrepError;
 			expect(octogrepError.code).toBe("GH_FETCH_FAILED");
 			expect(octogrepError.retryable).toBe(false);
+			expect(octogrepError.message).toBe("GitHub fetch failed: Validation Failed (HTTP 422)");
 		}
 	});
 
@@ -103,6 +114,7 @@ describe("fetchFileContentsWithGh", () => {
 			const octogrepError = error as OctogrepError;
 			expect(octogrepError.code).toBe("GH_FETCH_FAILED");
 			expect(octogrepError.retryable).toBe(true);
+			expect(octogrepError.message).toBe("GitHub fetch failed: Service Unavailable (HTTP 503)");
 		}
 	});
 });
