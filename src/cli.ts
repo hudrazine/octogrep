@@ -5,7 +5,7 @@ import { OctogrepError } from "./gh.js";
 import { executeSearch } from "./search.js";
 import { searchOptionsSchema, searchOutputSchema } from "./types.js";
 
-export const OCTOGREP_VERSION = "0.3.0";
+export const OCTOGREP_VERSION = "0.3.1";
 
 export const cli = Cli.create("octogrep", {
 	version: OCTOGREP_VERSION,
