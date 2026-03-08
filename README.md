@@ -127,6 +127,21 @@ octogrep fetch "$contentsUrl"
 - rejects browser `htmlUrl` values
 - prints file contents for AI and human reading workflows
 
+When a fetched file is too large to pass around in one step, use `incur`'s built-in token controls to read it in chunks:
+
+```sh
+# Check approximate output size first
+octogrep fetch "$contentsUrl" --token-count
+
+# Read the first chunk
+octogrep fetch "$contentsUrl" --token-limit 400
+
+# Continue from the next chunk
+octogrep fetch "$contentsUrl" --token-offset 400 --token-limit 400
+```
+
+Use `--limit` and `--page` to page `search` results themselves. Use `--token-limit` and `--token-offset` when you want to trim already formatted output, especially long `fetch` output for LLM handoff or staged reading.
+
 ## Output
 
 Default output is TOON (`incur` standard behavior).
@@ -154,6 +169,10 @@ Use `htmlUrl` for browsing and `contentsUrl` for fetching file contents as text:
 ```sh
 octogrep fetch "$contentsUrl"
 ```
+
+For large file reads, keep the default TOON output and add `--token-count`, `--token-limit`, or `--token-offset` as needed. With `--verbose`, truncated output also includes `meta.nextOffset` so the next chunk can be requested programmatically.
+
+Token controls operate on the formatted output stream rather than whole result items, so they are useful for chunking `fetch` output but are not a precise replacement for `search --page` and `search --limit`.
 
 If you need byte-exact raw output or stable hashes, use `gh api` directly:
 

@@ -47,18 +47,30 @@ Read full files when you need to confirm behavior, summarize an implementation, 
 - If you need byte-exact raw output or lower-level control, use `gh api -H "Accept: application/vnd.github.raw+json" "$contentsUrl"` directly
 - For light triage, `fragment` is often enough to delay this step
 
-### 5. Refine one dimension at a time
+### 5. Chunk large fetch output when needed
+
+Use token controls when the file contents are too large to pass to the next step in one response.
+
+- Keep the default TOON output unless a later step clearly needs JSON or another format
+- Start with `octogrep fetch "$contentsUrl" --token-count` to estimate size
+- Read the first chunk with `octogrep fetch "$contentsUrl" --token-limit 400`
+- Continue with `octogrep fetch "$contentsUrl" --token-offset 400 --token-limit 400`
+- If you need machine-friendly continuation, add `--verbose` and use `meta.nextOffset`
+- Use `--limit` and `--page` to change how many `search` results you get back; use token controls to trim already formatted output, especially `fetch` output for LLM handoff
+
+### 6. Refine one dimension at a time
 
 Change one part of the query at a time so the effect is easy to explain.
 
 - Narrow by repository, organization, or user before adding filename or path constraints
 - Add filename, path, or language filters one at a time
 
-### 6. Change output format only when needed
+### 7. Change output format only when needed
 
 Keep the output compact unless the task clearly needs structure for a follow-up step.
 
 - Keep TOON output when reading results directly or passing them to another model step
+- Keep TOON output when using token controls unless the next step specifically requires structured parsing
 - Use `--json` only when the same turn requires structured post-processing, counting, or deterministic extraction
 
 Read [`references/query-patterns.md`](./references/query-patterns.md) when you need ready-made search shapes.
