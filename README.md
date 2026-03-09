@@ -56,19 +56,19 @@ bunx octogrep --version
 
 You can confirm the CLI is available with `octogrep --version`.
 
-### Install the octogrep skill
+### Install the octogrep-cli skill
 
 This is separate from installing the `octogrep` CLI itself. To install the AI agent skill, use [`vercel-labs/skills`](https://github.com/vercel-labs/skills) via `npx skills add`.
 
 ```sh
 # Generic install
-npx skills add hudrazine/octogrep --skill octogrep
+npx skills add hudrazine/octogrep --skill octogrep-cli
 
 # Install for Codex
-npx skills add hudrazine/octogrep --skill octogrep -a codex
+npx skills add hudrazine/octogrep --skill octogrep-cli -a codex
 
 # Install for Claude Code
-npx skills add hudrazine/octogrep --skill octogrep -a claude-code
+npx skills add hudrazine/octogrep --skill octogrep-cli -a claude-code
 ```
 
 ## Usage

@@ -1,0 +1,4 @@
+interface:
+  display_name: "octogrep CLI"
+  short_description: "GitHub code search workflow for AI agents"
+  default_prompt: "Use $octogrep-cli to search GitHub code and gather implementation examples."

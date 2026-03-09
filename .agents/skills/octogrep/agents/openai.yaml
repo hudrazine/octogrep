@@ -1,4 +1,0 @@
-interface:
-  display_name: "octogrep"
-  short_description: "GitHub code search workflow for AI agents"
-  default_prompt: "Use $octogrep to search GitHub code and gather implementation examples."

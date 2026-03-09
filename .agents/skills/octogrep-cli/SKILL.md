@@ -1,9 +1,9 @@
 ---
-name: octogrep
-description: Stabilize GitHub code search workflows with octogrep. Use when investigating code on GitHub, looking up upstream implementations, gathering framework or API usage examples, sampling how a symbol is used across repositories, or when the user explicitly asks for octogrep.
+name: octogrep-cli
+description: Use the octogrep CLI when searching GitHub code, looking up upstream implementations, collecting framework or API usage examples, sampling symbol usage across repositories, or fetching full file contents from octogrep search results.
 ---
 
-# Octogrep
+# octogrep CLI
 
 Use `octogrep` to search GitHub code, inspect promising matches, and fetch full file contents when a fragment is not enough.
 
