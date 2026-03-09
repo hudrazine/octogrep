@@ -1,68 +1,74 @@
 # Query Patterns
 
-Use these patterns when turning a user request into a stable `octogrep search ...` command.
+Use these patterns when you know the kind of code you want, but the first `octogrep search ...` command is still unclear.
+Each pattern gives you a reliable starting point, then a single direction to refine.
 
 ## Implementation Lookup
 
-Prompt:
-`Find upstream implementations of a root command`
+When to use:
+Find upstream implementations of a root command or another named behavior.
 
-Command shape:
+Command:
 
 ```sh
 octogrep search "root command" --limit 5
 ```
 
-Add `--repo <owner/repo>` after the first pass when the target project is known.
+How to refine:
+If one repository becomes the clear target, add `--repo <owner/repo>` on the next attempt.
 
 ## Framework Usage Examples
 
-Prompt:
-`Collect React Router useNavigate examples`
+When to use:
+Collect framework API usage examples, such as React Router `useNavigate`.
 
-Command shape:
+Command:
 
 ```sh
 octogrep search "useNavigate" --repo remix-run/react-router --language ts --limit 5
 ```
 
-Broaden by removing `--repo` before removing `--language`.
+How to refine:
+If the repo is too narrow, remove `--repo` before removing `--language`.
 
 ## Error String Search
 
-Prompt:
-`Find repositories that emit a specific error string`
+When to use:
+Find repositories that emit a specific error string or log line.
 
-Command shape:
+Command:
 
 ```sh
-octogrep search "connection reset by peer" --limit 10
+octogrep search "connection reset by peer" --limit 5
 ```
 
-If the phrase is too specific, shorten the literal before adding filters.
+How to refine:
+If the exact phrase is too specific, shorten the literal before adding any filters.
 
 ## File-Name Constrained Search
 
-Prompt:
-`Find panic handling in root.go`
+When to use:
+Search for a symbol or message inside a known filename such as `root.go`.
 
-Command shape:
+Command:
 
 ```sh
-octogrep search "panic" --filename root.go --limit 10
+octogrep search "panic" --filename root.go --limit 5
 ```
 
-Add `--repo`, `--org`, or `--user` only after confirming the filename filter is useful.
+How to refine:
+If the filename filter is useful but results are still broad, add `--repo`, `--org`, or `--user` next.
 
 ## Organization, User, or Repo Narrowing
 
-Prompt:
-`Search http client usage inside repositories owned by the cli organization`
+When to use:
+Search within one organization, user, or repository before broadening to GitHub-wide search.
 
-Command shape:
+Command:
 
 ```sh
-octogrep search "http client" --org cli --limit 10
+octogrep search "http client" --org cli --limit 5
 ```
 
-When one repository becomes the clear target, switch to `--repo owner/name`.
+How to refine:
+If one repository becomes the clear target, switch from `--org` or `--user` to `--repo owner/name`.
